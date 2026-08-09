@@ -38,7 +38,7 @@ def ffmpeg_install_hint(system: str | None = None) -> str:
     if system == "Darwin":
         return "brew install ffmpeg"
     if system == "Windows":
-        return "winget install -e --id Gyan.FFmpeg"
+        return "winget install -e --id Gyan.FFmpeg（安装后关闭并重新打开 PowerShell）"
     return "请使用系统包管理器安装 ffmpeg（例如 sudo apt install ffmpeg）"
 
 

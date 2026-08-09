@@ -30,6 +30,7 @@ if errorlevel 1 (
 where ffmpeg >nul 2>nul
 if errorlevel 1 (
   echo [错误] 未找到 ffmpeg。
+  echo 如果刚刚通过 WinGet 安装，请先关闭所有 PowerShell 窗口再重试。
   echo 可在 PowerShell 中运行：
   echo winget install -e --id Gyan.FFmpeg
   echo 安装后请重新打开终端，再双击本脚本。

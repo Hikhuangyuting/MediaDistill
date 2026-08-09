@@ -108,10 +108,22 @@ winget install -e --id Python.Python.3.13
 winget install -e --id Gyan.FFmpeg
 ```
 
-安装后请关闭并重新打开 PowerShell，再确认：
+WinGet 输出“已修改路径环境变量；重启 shell 以使用新值”后，必须**完整关闭当前
+PowerShell 窗口并重新打开一个新窗口**。只在原窗口中重复命令不会刷新 PATH。然后确认：
 
 ```powershell
 python --version
+ffmpeg -version
+ffprobe -version
+```
+
+如果暂时不想关闭窗口，可以在当前 PowerShell 中手动重新载入系统和用户 PATH：
+
+```powershell
+$machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+$env:Path = "$machinePath;$userPath"
+
 ffmpeg -version
 ffprobe -version
 ```
@@ -262,6 +274,41 @@ MediaDistill 需要读取本机大文件、调用 ffmpeg 并运行本地模型�
 ```
 
 这样窗口不会立即消失，可以看到 Python、ffmpeg、网络连接或依赖安装的具体错误。
+
+### Windows 已显示 FFmpeg 安装成功，但仍提示找不到命令？
+
+首先关闭安装 FFmpeg 时使用的整个 PowerShell 窗口，重新打开 PowerShell 后再测试。WinGet
+安装的便携命令通常通过 `%LOCALAPPDATA%\Microsoft\WinGet\Links` 提供；旧窗口仍保存着
+安装前的 PATH。
+
+如果新窗口仍然找不到，依次运行：
+
+```powershell
+winget list -e --id Gyan.FFmpeg
+$links = "$env:LOCALAPPDATA\Microsoft\WinGet\Links"
+Test-Path $links
+Get-ChildItem $links
+$env:Path -split ";" | Where-Object { $_ -like "*WinGet*" }
+Get-Command ffmpeg -ErrorAction SilentlyContinue
+```
+
+- `winget list` 找不到包：重新运行 `winget install -e --id Gyan.FFmpeg`。
+- `Links` 目录中有 `ffmpeg.exe`，但 PATH 没有该目录：先运行前文的 PATH 重新载入命令。
+- 重新载入后仍缺少该目录，可以把它补进用户 PATH：
+
+```powershell
+$links = "$env:LOCALAPPDATA\Microsoft\WinGet\Links"
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if (($userPath -split ";") -notcontains $links) {
+    [Environment]::SetEnvironmentVariable(
+        "Path",
+        "$($userPath.TrimEnd(';'));$links",
+        "User"
+    )
+}
+```
+
+执行后再次完整关闭并重新打开 PowerShell。
 
 ## 开发状态
 

@@ -71,7 +71,7 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(ffmpeg_install_hint("Darwin"), "brew install ffmpeg")
         self.assertEqual(
             ffmpeg_install_hint("Windows"),
-            "winget install -e --id Gyan.FFmpeg",
+            "winget install -e --id Gyan.FFmpeg（安装后关闭并重新打开 PowerShell）",
         )
 
 
