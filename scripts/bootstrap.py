@@ -15,6 +15,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def configure_console_encoding() -> None:
+    """在 Windows 等非 UTF-8 控制台中稳定输出中文。"""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is not None:
+            reconfigure(encoding="utf-8", errors="replace")
+
+
+configure_console_encoding()
+
+
 def venv_python(root: Path, windows: bool | None = None) -> Path:
     """返回当前平台虚拟环境中的 Python 路径。"""
     windows = os.name == "nt" if windows is None else windows
