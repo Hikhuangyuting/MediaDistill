@@ -1,0 +1,39 @@
+{
+  "paths": {
+    "video_input": "videos",
+    "audio_input": "audio",
+    "assets": "assets",
+    "workspace": "workspace",
+    "catalog": "workspace/catalog.json",
+    "output_markdown": "output/markdown",
+    "review": "review",
+    "logs": "logs",
+    "state": "workspace/state"
+  },
+  "routing": {
+    "video_extensions": [".mov", ".mp4", ".mkv", ".webm"],
+    "audio_extensions": [".m4a", ".mp3", ".wav", ".flac"]
+  },
+  "segment": {
+    "max_segment_sec": 480,
+    "min_segment_sec": 60,
+    "fallback_interval_sec": 300,
+    "silence_threshold_db": -35,
+    "silence_min_duration_sec": 1.5,
+    "scene_threshold": 0.35
+  },
+  "vision": {
+    "max_frames_per_segment": 5,
+    "keyframe_interval_sec": 60,
+    "frames_per_batch": 8,
+    "scene_fallback_interval_sec": 60,
+    "task_mode": "per_scene"
+  },
+  "speech": {
+    "model": "medium",
+    "language": "zh",
+    "device": "cpu",
+    "compute_type": "int8",
+    "auto_install": false
+  }
+}

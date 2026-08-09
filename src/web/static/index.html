@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MediaDistill · 影音萃取</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/overrides.css">
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="mark">MD</span><div><strong>MediaDistill</strong><small>本地影音知识萃取工具</small></div></div>
+    <div class="header-actions"><span class="local">● 仅在本机运行</span><button id="uploadBtn" class="primary">＋ 批量导入</button><input id="fileInput" type="file" hidden multiple accept="audio/*,video/*"></div>
+  </header>
+  <main>
+    <aside>
+      <div class="aside-head"><h1>素材库</h1><div class="aside-tools"><button id="newGroup" title="新建分组">＋ 新建分组</button><span id="count">—</span></div></div>
+      <div class="filters"><button class="filter active" data-filter="all">全部</button><button class="filter" data-filter="video">视频</button><button class="filter" data-filter="audio">音频</button></div>
+      <div id="selectionBar" class="selection-bar" hidden><strong id="selectionCount">已选 0 项</strong><button id="clearSelection">取消选择</button></div>
+      <div id="dropzone">拖入一个或多个音视频<br><small>支持 MOV、MP4、M4A、MP3、WAV</small></div>
+      <div id="assetList" class="asset-list"><div class="empty">正在读取素材…</div></div>
+    </aside>
+    <section class="workspace">
+      <div id="welcome" class="welcome"><div class="orb">✦</div><h2>把音视频变成可复用的知识</h2><p>从左侧选择已有素材，或导入一个新文件开始处理。</p></div>
+      <div id="detail" hidden>
+        <div class="detail-head"><div><div class="eyebrow" id="assetType"></div><h2 id="assetTitle"></h2><p id="assetFile"></p><label class="group-picker">分组 <select id="groupSelect"></select></label></div><div class="actions"><a id="download" class="ghost" href="#">下载 Markdown</a><button id="process" class="primary">开始处理</button></div></div>
+        <div class="progress-card"><div class="progress-top"><strong>处理流程</strong><span id="statusBadge"></span></div><div id="stages" class="stages"></div></div>
+        <div class="tabs"><button class="tab active" data-tab="markdown">Markdown 总结</button><button class="tab" data-tab="transcript">完整转写</button><button class="tab" data-tab="log">运行记录</button></div>
+        <div class="content-card"><pre id="content">选择内容后将在这里显示</pre></div>
+      </div>
+    </section>
+  </main>
+  <div id="toast" role="status"></div>
+  <div id="batch" class="batch" hidden><div class="batch-top"><strong id="batchTitle">正在批量导入</strong><span id="batchCount">0/0</span></div><div class="batch-track"><i id="batchBar"></i></div><div id="batchFile"></div></div>
+  <div id="groupModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="groupModalTitle">
+    <div class="modal-card"><h3 id="groupModalTitle">新建分组</h3><p>为素材创建一个便于识别的分组名称。</p><input id="groupName" maxlength="60" placeholder="例如：医疗产品案例" autocomplete="off"><div class="modal-actions"><button id="groupCancel" class="ghost">取消</button><button id="groupConfirm" class="primary">创建分组</button></div></div>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

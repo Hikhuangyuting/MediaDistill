@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SegmentKnowledge",
+  "type": "object",
+  "required": [
+    "segment_id",
+    "topic",
+    "summary",
+    "design_signals",
+    "low_value_score",
+    "low_value_reason"
+  ],
+  "properties": {
+    "segment_id": {
+      "type": "string"
+    },
+    "topic": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "design_signals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "low_value_score": {
+      "type": "number"
+    },
+    "low_value_reason": {
+      "type": "string"
+    }
+  }
+}

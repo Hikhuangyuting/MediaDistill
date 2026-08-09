@@ -1,0 +1,10 @@
+# MediaDistill
+# Web UI and pipeline orchestration use Python's standard library.
+
+# Per-segment speech recognition
+faster-whisper>=1.0.0
+
+# Optional
+# pyyaml>=6.0
+
+# System (not pip): ffmpeg, ffprobe

@@ -1,0 +1,57 @@
+name: 错误报告
+description: 报告可以稳定复现的 MediaDistill 问题
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈。请先移除日志中的个人路径、素材内容和敏感信息。
+  - type: input
+    id: system
+    attributes:
+      label: 操作系统
+      placeholder: 例如 macOS 15.5
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python 与 ffmpeg 版本
+      placeholder: 例如 Python 3.13 / ffmpeg 7.1
+    validations:
+      required: true
+  - type: dropdown
+    id: stage
+    attributes:
+      label: 出现问题的阶段
+      options:
+        - 安装或启动
+        - 导入素材
+        - 语音转写
+        - 场景检测或关键帧
+        - 画面分析
+        - 音画融合
+        - 知识提炼
+        - Markdown
+        - 其他
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 请按顺序说明执行了什么、看到了什么。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期结果
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 已脱敏的日志
+      render: shell

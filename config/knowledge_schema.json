@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DesignKnowledgeDoc",
+  "type": "object",
+  "required": [
+    "asset_id",
+    "source",
+    "topic",
+    "design_context",
+    "core_problem",
+    "design_approach",
+    "design_principles",
+    "borrowable_methods",
+    "components",
+    "design_systems",
+    "interaction_patterns",
+    "reusable_experience",
+    "my_reflection",
+    "designbrain_knowledge",
+    "tags",
+    "timeline_refs",
+    "screenshot_refs"
+  ],
+  "properties": {
+    "asset_id": { "type": "string" },
+    "source": {
+      "type": "object",
+      "required": ["type", "filename"],
+      "properties": {
+        "type": { "enum": ["video", "audio"] },
+        "filename": { "type": "string" },
+        "duration_sec": { "type": "number" }
+      }
+    },
+    "topic": { "type": "string" },
+    "design_context": { "type": "string" },
+    "core_problem": { "type": "string" },
+    "design_approach": { "type": "string" },
+    "design_principles": { "type": "array", "items": { "type": "string" } },
+    "borrowable_methods": { "type": "array", "items": { "type": "string" } },
+    "components": { "type": "array", "items": { "type": "string" } },
+    "design_systems": { "type": "array", "items": { "type": "string" } },
+    "interaction_patterns": { "type": "array", "items": { "type": "string" } },
+    "reusable_experience": { "type": "string" },
+    "my_reflection": { "type": "string" },
+    "designbrain_knowledge": { "type": "string" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "timeline_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["time", "quote"],
+        "properties": {
+          "time": { "type": "string" },
+          "quote": { "type": "string" },
+          "segment_id": { "type": "string" }
+        }
+      }
+    },
+    "screenshot_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["time", "frame_id", "caption"],
+        "properties": {
+          "time": { "type": "string" },
+          "frame_id": { "type": "string" },
+          "caption": { "type": "string" }
+        }
+      }
+    }
+  }
+}
