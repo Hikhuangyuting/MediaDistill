@@ -12,7 +12,8 @@ python -m pip check
 bash -n "安装 MediaDistill.command" "启动 MediaDistill.command"
 ```
 
-推送后确认 GitHub Actions 在 Python 3.10 与 3.13 上全部通过。
+推送后确认 GitHub Actions 在 Linux Python 3.10、3.13 和 Windows Python 3.13
+上全部通过。
 
 ## 隐私与仓库内容
 

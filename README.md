@@ -65,7 +65,7 @@ Speech → Text Analysis → Knowledge → Markdown
 | --- | --- | --- |
 | macOS | 已验证 | 提供双击安装与启动脚本 |
 | Linux | 预期可用 | 请使用终端安装，欢迎反馈发行版兼容性 |
-| Windows | 尚未验证 | 当前未提供 PowerShell 安装脚本 |
+| Windows 10/11 | 提供安装指导 | 提供双击脚本；尚待更多真机兼容性反馈 |
 
 macOS 可以使用 Homebrew 安装 ffmpeg：
 
@@ -85,6 +85,37 @@ brew install ffmpeg
 
 > macOS 第一次打开从互联网下载的 `.command` 文件时，可能需要右键文件，选择“打开”，再确认一次。
 
+## 最简单的使用方式（Windows 10/11）
+
+1. 在 GitHub 仓库页面点击 `Code → Download ZIP`，解压到一个固定目录；不要直接在 ZIP
+   压缩包预览窗口中运行。
+2. 安装 Python 3.10 或更高版本，以及包含 `ffmpeg`、`ffprobe` 的 ffmpeg 套件。
+3. 双击 `安装 MediaDistill.bat`，等待依赖安装完成。
+4. 双击 `启动 MediaDistill.bat`。
+5. 浏览器会打开 `http://127.0.0.1:8765/`，然后即可批量导入素材。
+
+在 Windows 10 1809 或更高版本、Windows 11 中，可以打开 PowerShell 并使用 WinGet 安装
+前置依赖：
+
+```powershell
+winget install -e --id Python.Python.3.13
+winget install -e --id Gyan.FFmpeg
+```
+
+安装后请关闭并重新打开 PowerShell，再确认：
+
+```powershell
+python --version
+ffmpeg -version
+ffprobe -version
+```
+
+如果电脑没有 `winget`，可通过 Microsoft Store 安装或更新“应用安装程序”，也可以分别从
+Python 与 ffmpeg 官方网站下载安装。WinGet 官方要求 Windows 10 1809（内部版本 17763）
+或更高版本。
+
+停止工具的方法：关闭运行 MediaDistill 的命令提示符窗口，或在窗口中按 `Control + C`。
+
 ## 使用终端安装
 
 ```bash
@@ -99,6 +130,17 @@ python run.py --web --port 8765
 ```
 
 浏览器访问：<http://127.0.0.1:8765/>
+
+Windows PowerShell 对应命令：
+
+```powershell
+git clone https://github.com/Hikhuangyuting/MediaDistill.git
+Set-Location MediaDistill
+
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe run.py --web --port 8765
+```
 
 ## 网页工作台
 
@@ -168,7 +210,9 @@ media-distill/
 ├── logs/                   # 本地运行日志，不提交 Git
 ├── run.py                  # 统一入口
 ├── 安装 MediaDistill.command
-└── 启动 MediaDistill.command
+├── 启动 MediaDistill.command
+├── 安装 MediaDistill.bat
+└── 启动 MediaDistill.bat
 ```
 
 ## 数据与隐私
@@ -195,6 +239,16 @@ media-distill/
 ### 为什么没有上传到在线网站？
 
 MediaDistill 需要读取本机大文件、调用 ffmpeg 并运行本地模型，当前定位是本地网页工具，不是托管式在线服务。
+
+### Windows 双击脚本一闪而过怎么办？
+
+先打开命令提示符，进入解压后的 MediaDistill 目录，再运行：
+
+```bat
+"安装 MediaDistill.bat"
+```
+
+这样窗口不会立即消失，可以看到 Python、ffmpeg、网络连接或依赖安装的具体错误。
 
 ## 开发状态
 
