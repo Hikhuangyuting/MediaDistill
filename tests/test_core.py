@@ -6,6 +6,7 @@ import threading
 import unittest
 from pathlib import Path
 
+from scripts.bootstrap import ffmpeg_install_hint, venv_python
 from src.core.config import _merge_dicts, load_settings
 from src.core.utils import asset_id_from_path, read_json, slugify, write_json
 
@@ -58,6 +59,20 @@ class ConfigTests(unittest.TestCase):
             settings = load_settings(root)
             self.assertEqual(settings.speech.model, "small")
             self.assertEqual(settings.paths.video_input, root / "videos")
+
+
+class BootstrapTests(unittest.TestCase):
+    def test_virtual_environment_python_path_is_platform_specific(self) -> None:
+        root = Path("project")
+        self.assertEqual(venv_python(root, windows=False), root / ".venv/bin/python")
+        self.assertEqual(venv_python(root, windows=True), root / ".venv/Scripts/python.exe")
+
+    def test_ffmpeg_install_hints_are_platform_specific(self) -> None:
+        self.assertEqual(ffmpeg_install_hint("Darwin"), "brew install ffmpeg")
+        self.assertEqual(
+            ffmpeg_install_hint("Windows"),
+            "winget install -e --id Gyan.FFmpeg",
+        )
 
 
 if __name__ == "__main__":

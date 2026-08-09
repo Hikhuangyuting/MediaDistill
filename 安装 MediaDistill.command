@@ -25,9 +25,7 @@ if ! command -v ffmpeg >/dev/null 2>&1 || ! command -v ffprobe >/dev/null 2>&1; 
   exit 1
 fi
 
-python3 -m venv .venv || exit 1
-.venv/bin/python -m pip install --upgrade pip
-.venv/bin/python -m pip install -r requirements.txt
+python3 scripts/bootstrap.py || exit 1
 
 echo ""
 echo "安装完成。以后双击“启动 MediaDistill.command”即可使用。"

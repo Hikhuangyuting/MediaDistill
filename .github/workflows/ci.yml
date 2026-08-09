@@ -27,6 +27,8 @@ jobs:
         run: ruff check .
       - name: Python 回归测试
         run: python -m unittest discover -s tests -v
+      - name: 跨平台安装入口检查
+        run: python scripts/bootstrap.py --help
       - name: Python 语法检查
         run: python -m compileall -q src run.py tests
       - name: 启动脚本语法检查
@@ -41,6 +43,8 @@ jobs:
           python-version: "3.13"
       - name: Windows 回归测试
         run: python -m unittest discover -s tests -v
+      - name: Windows 安装入口检查
+        run: python scripts/bootstrap.py --help
       - name: Windows Python 语法检查
         run: python -W error -m compileall -f -q src scripts run.py tests
       - name: Windows 命令行入口检查

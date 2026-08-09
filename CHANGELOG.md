@@ -14,6 +14,7 @@
 - 可恢复的画面分析、音画融合、知识提炼和 Markdown 流水线。
 - 深色本地网页工作台与 macOS 双击安装、启动脚本。
 - Windows 10/11 双击安装、启动脚本及 PowerShell 安装指导。
+- macOS、Windows 与 Linux 共用的 `scripts/bootstrap.py` 安装和环境检查入口。
 
 ### 安全与隐私
 

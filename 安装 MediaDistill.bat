@@ -44,14 +44,7 @@ if errorlevel 1 (
   exit /b 1
 )
 
-echo 正在创建 Python 虚拟环境……
-%PYTHON_CMD% -m venv .venv
-if errorlevel 1 goto :failed
-
-echo 正在安装 Python 依赖……
-".venv\Scripts\python.exe" -m pip install --upgrade pip
-if errorlevel 1 goto :failed
-".venv\Scripts\python.exe" -m pip install -r requirements.txt
+%PYTHON_CMD% scripts\bootstrap.py
 if errorlevel 1 goto :failed
 
 echo.

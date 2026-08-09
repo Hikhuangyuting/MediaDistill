@@ -67,19 +67,25 @@ Speech → Text Analysis → Knowledge → Markdown
 | Linux | 预期可用 | 请使用终端安装，欢迎反馈发行版兼容性 |
 | Windows 10/11 | 提供安装指导 | 提供双击脚本；尚待更多真机兼容性反馈 |
 
-macOS 可以使用 Homebrew 安装 ffmpeg：
+MediaDistill 的 Python 依赖会安装进项目自己的 `.venv`，但 Python、ffmpeg 和 ffprobe 是
+系统级前置依赖，需要先由各操作系统的包管理器安装：
 
-```bash
-brew install ffmpeg
-```
+| 系统 | 推荐命令 |
+| --- | --- |
+| macOS | `brew install python ffmpeg` |
+| Windows 10/11 | `winget install -e --id Python.Python.3.13`，然后 `winget install -e --id Gyan.FFmpeg` |
+| Ubuntu/Debian | `sudo apt update && sudo apt install python3 python3-venv ffmpeg` |
+
+WinGet 仅属于 Windows；macOS 中承担同类职责的是 Homebrew。双击安装脚本不会在用户未确认的
+情况下修改系统软件，它只检查前置依赖，然后创建 `.venv` 并安装 Python 包。
 
 ## 最简单的使用方式（macOS）
 
-1. 下载或克隆项目。
-2. 双击 `安装 MediaDistill.command`，等待依赖安装完成。
-3. 双击 `启动 MediaDistill.command`。
-4. 浏览器会打开 `http://127.0.0.1:8765/`。
-5. 点击“批量导入”或把影音文件拖入页面。
+1. 如果尚未安装前置依赖，先在终端运行 `brew install python ffmpeg`。
+2. 下载或克隆项目。
+3. 双击 `安装 MediaDistill.command`，等待依赖安装完成。
+4. 双击 `启动 MediaDistill.command`。
+5. 浏览器会打开 `http://127.0.0.1:8765/`，然后即可批量导入素材。
 
 关闭启动终端窗口，或在终端中按 `Control + C`，即可停止本地服务。
 
@@ -116,31 +122,38 @@ Python 与 ffmpeg 官方网站下载安装。WinGet 官方要求 Windows 10 1809
 
 停止工具的方法：关闭运行 MediaDistill 的命令提示符窗口，或在窗口中按 `Control + C`。
 
-## 使用终端安装
+## 使用终端安装（macOS、Windows、Linux）
+
+终端安装的流程是通用的：安装系统前置依赖 → 获取代码 → 运行统一的
+`scripts/bootstrap.py` → 启动网页。不同系统只有 Python 命令和虚拟环境可执行文件路径不同。
+
+先用上方表格中的命令安装 Python、ffmpeg 与 ffprobe，然后获取代码：
 
 ```bash
 git clone https://github.com/Hikhuangyuting/MediaDistill.git
-cd media-distill
-
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-
-python run.py --web --port 8765
+cd MediaDistill
 ```
 
-浏览器访问：<http://127.0.0.1:8765/>
+macOS / Linux：
 
-Windows PowerShell 对应命令：
+```bash
+python3 scripts/bootstrap.py
+python3 scripts/bootstrap.py --check
+
+.venv/bin/python run.py --web --port 8765
+```
+
+Windows PowerShell：
 
 ```powershell
-git clone https://github.com/Hikhuangyuting/MediaDistill.git
-Set-Location MediaDistill
+py -3 scripts/bootstrap.py
+py -3 scripts/bootstrap.py --check
 
-py -3 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe run.py --web --port 8765
 ```
+
+`--check` 不会安装或修改内容，只检查 Python、ffmpeg、ffprobe、`.venv` 和
+faster-whisper 是否已经可用。启动后浏览器访问：<http://127.0.0.1:8765/>。
 
 ## 网页工作台
 
