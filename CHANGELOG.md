@@ -28,3 +28,4 @@
 - 补充 WinGet 安装 FFmpeg 后刷新 PATH，以及命令仍不可用时的诊断方法。
 - Windows 安装完成后强制验证 `.venv` 与 faster-whisper，并生成本地安装诊断日志。
 - Windows 启动前自动运行环境检查，缺失 `.venv` 时给出可直接执行的恢复命令。
+- Windows 子进程统一使用 UTF-8，状态 JSON 并发写入在 Windows 上也会安全串行化。

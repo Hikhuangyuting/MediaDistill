@@ -21,10 +21,14 @@ class CoreUtilsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "nested" / "state.json"
             barrier = threading.Barrier(8)
+            errors: list[BaseException] = []
 
             def writer(index: int) -> None:
-                barrier.wait()
-                write_json(path, {"writer": index, "values": list(range(50))})
+                try:
+                    barrier.wait()
+                    write_json(path, {"writer": index, "values": list(range(50))})
+                except BaseException as error:
+                    errors.append(error)
 
             threads = [threading.Thread(target=writer, args=(index,)) for index in range(8)]
             for thread in threads:
@@ -32,6 +36,7 @@ class CoreUtilsTests(unittest.TestCase):
             for thread in threads:
                 thread.join()
 
+            self.assertEqual(errors, [])
             data = read_json(path)
             self.assertIn(data["writer"], range(8))
             self.assertEqual(data["values"], list(range(50)))

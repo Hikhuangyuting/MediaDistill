@@ -57,10 +57,15 @@ def check_prerequisites() -> list[str]:
 
 def run_logged(command: list[str], log_file: Path, cwd: Path = ROOT) -> None:
     """运行命令，并把输出同时写到控制台和本地诊断日志。"""
+    child_env = os.environ.copy()
+    # Windows 的旧版 PowerShell/CI 控制台可能使用 cp936 或 cp1252；强制 Python
+    # 子进程使用 UTF-8，避免 pip 或诊断脚本输出中文时安装被意外中断。
+    child_env.setdefault("PYTHONUTF8", "1")
     with log_file.open("a", encoding="utf-8") as log:
         with subprocess.Popen(
             command,
             cwd=cwd,
+            env=child_env,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
