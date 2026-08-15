@@ -10,6 +10,8 @@ import threading
 from pathlib import Path
 from typing import Any
 
+_JSON_WRITE_LOCK = threading.RLock()
+
 
 def project_root() -> Path:
     return Path(__file__).resolve().parents[2]
@@ -34,14 +36,17 @@ def asset_id_from_path(path: Path) -> str:
 
 def write_json(path: Path, data: Any) -> None:
     """Atomic JSON write (temp + replace) to avoid truncated/corrupt state files."""
-    ensure_dir(path.parent)
-    payload = json.dumps(data, ensure_ascii=False, indent=2)
-    tmp = path.with_name(f".{path.name}.{os.getpid()}.{threading.get_ident()}.tmp")
-    try:
-        tmp.write_text(payload, encoding="utf-8")
-        tmp.replace(path)
-    finally:
-        tmp.unlink(missing_ok=True)
+    # Windows 不允许多个线程同时替换同一目标文件；进程内串行化替换，同时
+    # 保留 temp + os.replace 的原子写入语义。
+    with _JSON_WRITE_LOCK:
+        ensure_dir(path.parent)
+        payload = json.dumps(data, ensure_ascii=False, indent=2)
+        tmp = path.with_name(f".{path.name}.{os.getpid()}.{threading.get_ident()}.tmp")
+        try:
+            tmp.write_text(payload, encoding="utf-8")
+            tmp.replace(path)
+        finally:
+            tmp.unlink(missing_ok=True)
 
 
 def read_json(path: Path) -> Any:
