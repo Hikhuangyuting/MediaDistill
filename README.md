@@ -81,15 +81,95 @@ WinGet 仅属于 Windows；macOS 中承担同类职责的是 Homebrew。双击�
 
 ## 最简单的使用方式（macOS）
 
-1. 如果尚未安装前置依赖，先在终端运行 `brew install python ffmpeg`。
-2. 下载或克隆项目。
-3. 双击 `安装 MediaDistill.command`，等待依赖安装完成。
-4. 双击 `启动 MediaDistill.command`。
-5. 浏览器会打开 `http://127.0.0.1:8765/`，然后即可批量导入素材。
+以下步骤适用于常见的 Intel 和 Apple 芯片 Mac。
+
+### 第一步：打开“终端”
+
+按 `Command + 空格键` 打开聚焦搜索，输入“终端”或 `Terminal`，按回车打开。后续命令请逐行
+复制到终端，每输入一行按一次回车。
+
+### 第二步：检查并安装 Homebrew
+
+先检查电脑是否已有 Homebrew：
+
+```bash
+brew --version
+```
+
+如果能看到版本号，直接进入第三步。如果提示 `command not found: brew`，执行 Homebrew 官方
+安装命令：
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+安装过程中可能要求输入 Mac 登录密码。输入密码时终端不会显示字符，这是 macOS 的正常安全
+设计；输入完成后按回车即可。安装程序如果显示 `Next steps`，请复制并执行它给出的命令。
+
+安装结束后关闭终端，再重新打开一个终端，并再次运行：
+
+```bash
+brew --version
+```
+
+Apple 芯片 Mac 如果仍提示找不到 `brew`，先执行：
+
+```bash
+eval "$(/opt/homebrew/bin/brew shellenv)"
+```
+
+### 第三步：安装 Python 和 FFmpeg
+
+在终端执行：
+
+```bash
+brew install python ffmpeg
+```
+
+等待命令执行完成，然后逐项确认：
+
+```bash
+python3 --version
+ffmpeg -version
+ffprobe -version
+```
+
+Python 应为 3.10 或更高版本，三个命令都能显示版本信息后再继续。
+
+### 第四步：下载并解压 MediaDistill
+
+在 GitHub 仓库页面点击 `Code → Download ZIP`。下载完成后，在 Finder 的“下载”目录中双击
+ZIP 文件解压，再把解压后的项目文件夹移动到桌面或其他固定位置。
+
+不要直接在 ZIP 压缩包中运行文件，也不要只复制其中一个安装脚本。
+
+### 第五步：安装 MediaDistill
+
+打开解压后的项目文件夹，右键点击 `安装 MediaDistill.command`，选择“打开”，在系统提示中
+再次点击“打开”。首次安装需要保持网络连接，程序会创建 `.venv` 并安装 Python 依赖。
+
+看到“安装完成”后按回车关闭窗口。项目文件夹中出现 `.venv` 是正常现象；Finder 默认可能
+隐藏以点开头的目录，不需要手动打开或修改它。
+
+如果系统提示文件没有执行权限，打开终端，先输入 `cd `（`cd` 后保留一个空格），把项目文件夹
+从 Finder 拖进终端窗口，然后按回车。接着执行：
+
+```bash
+chmod +x "安装 MediaDistill.command" "启动 MediaDistill.command"
+```
+
+再重新右键打开安装脚本。
+
+### 第六步：启动网页工具
+
+双击 `启动 MediaDistill.command`，并保持终端窗口打开。浏览器会自动打开：
+
+<http://127.0.0.1:8765/>
+
+如果浏览器没有自动打开，可以手动输入这个地址。看到 MediaDistill 素材库页面后，即可批量
+导入视频或音频。
 
 关闭启动终端窗口，或在终端中按 `Control + C`，即可停止本地服务。
-
-> macOS 第一次打开从互联网下载的 `.command` 文件时，可能需要右键文件，选择“打开”，再确认一次。
 
 ## 最简单的使用方式（Windows 10/11）
 
