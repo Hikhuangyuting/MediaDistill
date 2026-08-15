@@ -65,7 +65,7 @@ Speech → Text Analysis → Knowledge → Markdown
 | --- | --- | --- |
 | macOS | 已验证 | 提供双击安装与启动脚本 |
 | Linux | 预期可用 | 请使用终端安装，欢迎反馈发行版兼容性 |
-| Windows 10/11 | 提供安装指导 | 提供双击脚本；尚待更多真机兼容性反馈 |
+| Windows 10/11 | 已验证 | 提供双击安装、启动脚本与 PowerShell 安装方式 |
 
 MediaDistill 的 Python 依赖会安装进项目自己的 `.venv`，但 Python、ffmpeg 和 ffprobe 是
 系统级前置依赖，需要先由各操作系统的包管理器安装：
@@ -93,33 +93,37 @@ WinGet 仅属于 Windows；macOS 中承担同类职责的是 Homebrew。双击�
 
 ## 最简单的使用方式（Windows 10/11）
 
-1. 在 GitHub 仓库页面点击 `Code → Download ZIP`，解压到一个固定目录；不要直接在 ZIP
-   压缩包预览窗口中运行。
-2. 安装 Python 3.10 或更高版本，以及包含 `ffmpeg`、`ffprobe` 的 ffmpeg 套件。
-3. 双击 `安装 MediaDistill.bat`，等待依赖安装完成。
-4. 双击 `启动 MediaDistill.bat`。
-5. 浏览器会打开 `http://127.0.0.1:8765/`，然后即可批量导入素材。
+以下步骤适用于 Windows 10 1809 或更高版本以及 Windows 11。
 
-安装成功必须同时满足以下条件，不能只以窗口关闭或 pip 下载结束为准：
+### 第一步：下载并解压 MediaDistill
+
+在 GitHub 仓库页面点击 `Code → Download ZIP`，下载完成后右键 ZIP 文件并选择“全部解压”。
+请把项目解压到桌面或其他固定目录，不要直接在 ZIP 压缩包预览窗口中运行脚本。
+
+### 第二步：安装 Python 和 FFmpeg
+
+打开 PowerShell，依次执行：
 
 ```powershell
-Test-Path .\.venv\Scripts\python.exe
-.\.venv\Scripts\python.exe .\scripts\bootstrap.py --check
+python --version
 ```
 
-第一条应返回 `True`，第二条应显示 Python、ffmpeg、ffprobe、虚拟环境与
-faster-whisper 均可用。安装过程同时记录在 `logs\windows-install.log`。
-
-在 Windows 10 1809 或更高版本、Windows 11 中，可以打开 PowerShell 并使用 WinGet 安装
-前置依赖：
+如果显示 Python 3.10 或更高版本，可以跳过 Python 安装；否则执行：
 
 ```powershell
 winget install -e --id Python.Python.3.13
+```
+
+然后安装 FFmpeg：
+
+```powershell
 winget install -e --id Gyan.FFmpeg
 ```
 
-WinGet 输出“已修改路径环境变量；重启 shell 以使用新值”后，必须**完整关闭当前
-PowerShell 窗口并重新打开一个新窗口**。只在原窗口中重复命令不会刷新 PATH。然后确认：
+第一次使用 WinGet 时，系统可能要求确认来源协议，输入 `Y` 并按回车即可。
+
+安装完成后，**完整关闭这个 PowerShell 窗口，再重新打开一个新 PowerShell 窗口**。这是让
+Windows 载入 FFmpeg 新路径所必需的步骤。然后执行：
 
 ```powershell
 python --version
@@ -127,22 +131,48 @@ ffmpeg -version
 ffprobe -version
 ```
 
-如果暂时不想关闭窗口，可以在当前 PowerShell 中手动重新载入系统和用户 PATH：
+三个命令都能显示版本信息后，再继续下一步。如果 `python` 不可用，可以尝试
+`py -3 --version`，后续把安装命令开头的 `python` 换成 `py -3`。
+
+### 第三步：安装 MediaDistill
+
+进入解压后的文件夹，双击 `安装 MediaDistill.bat`。安装程序会创建项目专用的 `.venv`，
+并安装所需 Python 依赖；首次安装需要保持网络连接。
+
+看到“安装完成”后，点击文件资源管理器顶部的地址栏，输入 `powershell` 并按回车。新打开的
+PowerShell 会自动位于当前项目目录。执行下面两条命令确认安装结果：
 
 ```powershell
-$machinePath = [Environment]::GetEnvironmentVariable("Path", "Machine")
-$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-$env:Path = "$machinePath;$userPath"
-
-ffmpeg -version
-ffprobe -version
+Test-Path .\.venv\Scripts\python.exe
+.\.venv\Scripts\python.exe .\scripts\bootstrap.py --check
 ```
 
-如果电脑没有 `winget`，可通过 Microsoft Store 安装或更新“应用安装程序”，也可以分别从
-Python 与 ffmpeg 官方网站下载安装。WinGet 官方要求 Windows 10 1809（内部版本 17763）
-或更高版本。
+第一条应返回 `True`，第二条应显示 Python、ffmpeg、ffprobe、虚拟环境和 faster-whisper
+均可用。如果双击脚本没有完成安装，可在同一个 PowerShell 窗口直接执行：
 
-停止工具的方法：关闭运行 MediaDistill 的命令提示符窗口，或在窗口中按 `Control + C`。
+```powershell
+python .\scripts\bootstrap.py
+```
+
+安装过程会同时保存到 `logs\windows-install.log`，便于在安装未完成时查看具体提示。
+
+### 第四步：启动网页工具
+
+双击 `启动 MediaDistill.bat`，不要关闭随后出现的命令提示符窗口。浏览器会自动打开：
+
+<http://127.0.0.1:8765/>
+
+如果浏览器没有自动打开，也可以手动输入这个地址。只有命令提示符窗口中的本地服务保持
+运行时，页面才可以访问。关闭该窗口，或在窗口中按 `Control + C`，即可停止工具。
+
+### 没有 WinGet 时
+
+可以通过 Microsoft Store 安装或更新“应用安装程序”，再重新打开 PowerShell。也可以分别
+从 Python 与 FFmpeg 官方网站下载安装，但安装时需要勾选把程序加入 PATH。WinGet 官方要求
+Windows 10 1809（内部版本 17763）或更高版本。
+
+如果 FFmpeg 安装完成后当前窗口仍找不到命令，优先关闭并重新打开 PowerShell；不方便关闭时，
+也可以使用本文“常见问题”中的 PATH 刷新方法。
 
 ## 使用终端安装（macOS、Windows、Linux）
 
