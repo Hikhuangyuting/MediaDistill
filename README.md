@@ -100,6 +100,16 @@ WinGet 仅属于 Windows；macOS 中承担同类职责的是 Homebrew。双击�
 4. 双击 `启动 MediaDistill.bat`。
 5. 浏览器会打开 `http://127.0.0.1:8765/`，然后即可批量导入素材。
 
+安装成功必须同时满足以下条件，不能只以窗口关闭或 pip 下载结束为准：
+
+```powershell
+Test-Path .\.venv\Scripts\python.exe
+.\.venv\Scripts\python.exe .\scripts\bootstrap.py --check
+```
+
+第一条应返回 `True`，第二条应显示 Python、ffmpeg、ffprobe、虚拟环境与
+faster-whisper 均可用。安装过程同时记录在 `logs\windows-install.log`。
+
 在 Windows 10 1809 或更高版本、Windows 11 中，可以打开 PowerShell 并使用 WinGet 安装
 前置依赖：
 
@@ -158,11 +168,13 @@ python3 scripts/bootstrap.py --check
 Windows PowerShell：
 
 ```powershell
-py -3 scripts/bootstrap.py
-py -3 scripts/bootstrap.py --check
+python .\scripts\bootstrap.py
+.\.venv\Scripts\python.exe .\scripts\bootstrap.py --check
 
-.\.venv\Scripts\python.exe run.py --web --port 8765
+.\.venv\Scripts\python.exe .\run.py --web --port 8765
 ```
+
+如果系统只有 Python Launcher，也可以把第一条命令换成 `py -3 .\scripts\bootstrap.py`。
 
 `--check` 不会安装或修改内容，只检查 Python、ffmpeg、ffprobe、`.venv` 和
 faster-whisper 是否已经可用。启动后浏览器访问：<http://127.0.0.1:8765/>。
@@ -274,6 +286,31 @@ MediaDistill 需要读取本机大文件、调用 ffmpeg 并运行本地模型�
 ```
 
 这样窗口不会立即消失，可以看到 Python、ffmpeg、网络连接或依赖安装的具体错误。
+
+更可靠的方式是在项目目录打开 PowerShell，直接运行统一安装程序：
+
+```powershell
+python .\scripts\bootstrap.py
+```
+
+只有最后显示“安装完成”，并且 `.venv\Scripts\python.exe` 确实存在，才表示安装成功。
+如果失败，请查看 `logs\windows-install.log`；该日志包含系统、Python、ffmpeg 路径和 pip
+输出，但不会记录密码或 GitHub Token。
+
+### Windows 启动后浏览器提示无法访问 127.0.0.1？
+
+这表示本地服务没有持续运行，不是浏览器地址错误。请在项目目录的 PowerShell 中执行：
+
+```powershell
+Test-Path .\.venv\Scripts\python.exe
+.\.venv\Scripts\python.exe .\scripts\bootstrap.py --check
+.\.venv\Scripts\python.exe .\run.py --web --port 8765
+```
+
+保持 PowerShell 窗口打开。看到
+`MediaDistill 本地工作台：http://127.0.0.1:8765` 后再访问页面。若第一条返回 `False`，执行
+`python .\scripts\bootstrap.py`；若提示端口占用，改用 `--port 8766` 并访问
+`http://127.0.0.1:8766/`。
 
 ### Windows 已显示 FFmpeg 安装成功，但仍提示找不到命令？
 

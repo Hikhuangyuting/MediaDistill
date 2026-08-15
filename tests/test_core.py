@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import json
+import sys
 import tempfile
 import threading
 import unittest
 from pathlib import Path
 
-from scripts.bootstrap import ffmpeg_install_hint, venv_python
+from scripts.bootstrap import ffmpeg_install_hint, run_logged, venv_python
 from src.core.config import _merge_dicts, load_settings
 from src.core.utils import asset_id_from_path, read_json, slugify, write_json
 
@@ -73,6 +74,25 @@ class BootstrapTests(unittest.TestCase):
             ffmpeg_install_hint("Windows"),
             "winget install -e --id Gyan.FFmpeg（安装后关闭并重新打开 PowerShell）",
         )
+
+    def test_logged_command_captures_subprocess_output(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            log_file = Path(directory) / "install.log"
+            run_logged(
+                [sys.executable, "-c", "print('依赖安装成功')"],
+                log_file,
+                Path(directory),
+            )
+            self.assertIn("依赖安装成功", log_file.read_text(encoding="utf-8"))
+
+    def test_windows_launchers_validate_environment_and_explain_recovery(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        installer = (root / "安装 MediaDistill.bat").read_text(encoding="utf-8")
+        launcher = (root / "启动 MediaDistill.bat").read_text(encoding="utf-8")
+        self.assertIn("scripts\\bootstrap.py --check", installer)
+        self.assertIn("logs\\windows-install.log", installer)
+        self.assertIn("scripts\\bootstrap.py --check", launcher)
+        self.assertIn("python .\\scripts\\bootstrap.py", launcher)
 
 
 if __name__ == "__main__":

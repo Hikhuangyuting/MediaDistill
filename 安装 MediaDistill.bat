@@ -2,6 +2,7 @@
 setlocal
 chcp 65001 >nul
 set "PYTHONUTF8=1"
+set "PATH=%PATH%;%LOCALAPPDATA%\Microsoft\WinGet\Links"
 cd /d "%~dp0"
 
 echo MediaDistill · Windows 首次安装
@@ -48,6 +49,14 @@ if errorlevel 1 (
 %PYTHON_CMD% scripts\bootstrap.py
 if errorlevel 1 goto :failed
 
+if not exist ".venv\Scripts\python.exe" (
+  echo [错误] 安装程序结束后仍找不到 .venv\Scripts\python.exe。
+  goto :failed
+)
+
+".venv\Scripts\python.exe" scripts\bootstrap.py --check
+if errorlevel 1 goto :failed
+
 echo.
 echo 安装完成。以后双击“启动 MediaDistill.bat”即可使用。
 pause
@@ -56,5 +65,8 @@ exit /b 0
 :failed
 echo.
 echo [错误] 安装未完成，请查看上方错误信息。
+echo 诊断日志：%CD%\logs\windows-install.log
+echo 也可以在当前目录的 PowerShell 中运行：
+echo python .\scripts\bootstrap.py
 pause
 exit /b 1
