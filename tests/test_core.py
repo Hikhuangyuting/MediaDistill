@@ -92,8 +92,14 @@ class BootstrapTests(unittest.TestCase):
 
     def test_windows_launchers_validate_environment_and_explain_recovery(self) -> None:
         root = Path(__file__).resolve().parents[1]
-        installer = (root / "安装 MediaDistill.bat").read_text(encoding="utf-8")
-        launcher = (root / "启动 MediaDistill.bat").read_text(encoding="utf-8")
+        installer_path = root / "安装 MediaDistill.bat"
+        launcher_path = root / "启动 MediaDistill.bat"
+        installer_bytes = installer_path.read_bytes()
+        launcher_bytes = launcher_path.read_bytes()
+        installer = installer_bytes.decode("ascii")
+        launcher = launcher_bytes.decode("ascii")
+        self.assertNotIn(b"\n", installer_bytes.replace(b"\r\n", b""))
+        self.assertNotIn(b"\n", launcher_bytes.replace(b"\r\n", b""))
         self.assertIn("scripts\\bootstrap.py --check", installer)
         self.assertIn("logs\\windows-install.log", installer)
         self.assertIn("scripts\\bootstrap.py --check", launcher)
