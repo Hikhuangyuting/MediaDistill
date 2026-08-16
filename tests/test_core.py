@@ -105,6 +105,12 @@ class BootstrapTests(unittest.TestCase):
         self.assertIn("scripts\\bootstrap.py --check", launcher)
         self.assertIn("python .\\scripts\\bootstrap.py", launcher)
 
+    def test_macos_installer_distinguishes_ffprobe_link_failure(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        installer = (root / "安装 MediaDistill.command").read_text(encoding="utf-8")
+        self.assertIn("command -v ffprobe", installer)
+        self.assertIn("brew link ffmpeg", installer)
+
 
 if __name__ == "__main__":
     unittest.main()
