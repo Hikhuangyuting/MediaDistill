@@ -24,6 +24,8 @@
 
 ### 修复
 
+- 重写 macOS 安装指导：安装前检查现有依赖、终端网络和 Command Line Tools，并补充旧系统源码编译、代理、镜像与 FFmpeg 链接冲突的恢复步骤。
+- macOS 双击安装器现在会区分“缺少 FFmpeg”和“FFmpeg 已存在但 ffprobe 链接缺失”。
 - 修复英语 Windows 控制台使用 CP1252 时，中文命令行输出可能触发编码错误的问题。
 - 补充 WinGet 安装 FFmpeg 后刷新 PATH，以及命令仍不可用时的诊断方法。
 - Windows 安装完成后强制验证 `.venv` 与 faster-whisper，并生成本地安装诊断日志。

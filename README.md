@@ -83,12 +83,72 @@ WinGet 仅属于 Windows；macOS 中承担同类职责的是 Homebrew。双击�
 
 以下步骤适用于常见的 Intel 和 Apple 芯片 Mac。
 
-### 第一步：打开“终端”
+### 第一步：打开终端并检查现有环境
 
 按 `Command + 空格键` 打开聚焦搜索，输入“终端”或 `Terminal`，按回车打开。后续命令请逐行
 复制到终端，每输入一行按一次回车。
 
-### 第二步：检查并安装 Homebrew
+先运行：
+
+```bash
+sw_vers -productVersion
+python3 --version
+ffmpeg -version
+ffprobe -version
+```
+
+如果 Python 为 3.10 或更高版本，且 `ffmpeg`、`ffprobe` 都能显示版本，可以直接跳到第四步，
+**不需要为了 MediaDistill 重复安装 Homebrew 或 FFmpeg**。
+
+macOS 14 或更高版本是当前 Homebrew 正式支持的环境。macOS 13 仍可能安装成功，但部分依赖会
+改为本机编译，可能耗时一小时以上，并反复显示 Command Line Tools 警告。
+
+### 第二步：检查网络和 Command Line Tools
+
+Homebrew 需要终端访问 GitHub。浏览器能打开 GitHub，不代表终端也能访问；代理软件有时只代理
+浏览器。先运行：
+
+```bash
+curl -I https://github.com
+curl -I https://raw.githubusercontent.com
+```
+
+两条命令都应返回 HTTP 状态。如果出现 `Connection reset`、`Operation timed out` 或
+`Couldn't connect to server`，请先切换网络，或在代理软件中启用系统代理/TUN。使用本地代理时，
+按代理软件显示的实际端口设置，例如：
+
+```bash
+export http_proxy="http://127.0.0.1:你的代理端口"
+export https_proxy="http://127.0.0.1:你的代理端口"
+```
+
+再次运行两条 `curl` 命令，确认成功后再继续。
+
+接着检查 Apple Command Line Tools：
+
+```bash
+xcode-select -p
+clang --version
+```
+
+如果提示尚未安装，运行：
+
+```bash
+xcode-select --install
+```
+
+如果 Homebrew 随后明确提示工具过旧，先到 `系统设置 → 通用 → 软件更新` 安装更新。若
+`xcode-select` 认为已经安装、`softwareupdate --list` 却没有更新，并且
+`pkgutil --pkg-info=com.apple.pkg.CLTools_Executables` 找不到安装记录，说明旧工具状态异常。
+不要直接删除，先备份后重新安装：
+
+```bash
+sudo mv /Library/Developer/CommandLineTools /Library/Developer/CommandLineTools.backup
+sudo xcode-select --reset
+xcode-select --install
+```
+
+### 第三步：只安装缺少的依赖
 
 先检查电脑是否已有 Homebrew：
 
@@ -118,15 +178,22 @@ Apple 芯片 Mac 如果仍提示找不到 `brew`，先执行：
 eval "$(/opt/homebrew/bin/brew shellenv)"
 ```
 
-### 第三步：安装 Python 和 FFmpeg
-
-在终端执行：
+只在 Python 缺失或低于 3.10 时安装 Python：
 
 ```bash
-brew install python ffmpeg
+brew install python
 ```
 
-等待命令执行完成，然后逐项确认：
+只在 `ffmpeg` 或 `ffprobe` 缺失时安装 FFmpeg：
+
+```bash
+brew install ffmpeg
+```
+
+Homebrew 出现 `[y/n]` 时，输入小写 `y` 并按回车。macOS 13 上可能长时间编译；看到窗口标题中
+有 `ruby`，或在另一终端能查到 `brew`、`make`、`clang` 进程，说明仍在工作，不要重复输入。
+
+安装结束后逐项确认：
 
 ```bash
 python3 --version
@@ -134,7 +201,21 @@ ffmpeg -version
 ffprobe -version
 ```
 
-Python 应为 3.10 或更高版本，三个命令都能显示版本信息后再继续。
+如果日志显示 FFmpeg 已安装，但 `ffprobe` 仍提示 `command not found`，通常是旧的
+`/usr/local/bin/ffmpeg` 阻止 Homebrew 建立完整链接。先备份旧文件，再重新链接：
+
+```bash
+sudo mv /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg.before-homebrew
+brew link ffmpeg
+ffmpeg -version
+ffprobe -version
+```
+
+Apple 芯片 Mac 的冲突路径通常位于 `/opt/homebrew/bin`，请以 Homebrew 错误信息中显示的
+`Target` 路径为准。不要在未备份时直接运行 `rm` 或 `brew link --overwrite`。
+
+中国大陆网络如果无法连接 GitHub，可以改用可信镜像。镜像不是 Homebrew 官方服务器，使用前
+应了解并接受其信任边界；具体命令请参考[中国科学技术大学开源镜像说明](https://mirrors.ustc.edu.cn/help/brew.git.html)。
 
 ### 第四步：下载并解压 MediaDistill
 
